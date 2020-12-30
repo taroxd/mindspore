@@ -155,6 +155,8 @@ PrimitiveEvalImplMap &GetPrimitiveToEvalImplMap() {
     {prim::kPrimMemCpyAsync, {InferImplMemCpyAsync, true}},
     {prim::kPrimCast, {InferImplCast, true}},
     {prim::kPrimExpandDims, {InferImplExpandDims, true}},
+    // custom
+    {prim::kPrimScaledGather, {InferImplScaledGather, true}},
   };
   return prim_eval_implement_map;
 }

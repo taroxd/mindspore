@@ -281,6 +281,8 @@ AbstractBasePtr InferImplSequenceMask(const AnalysisEnginePtr &, const Primitive
                                       const AbstractBasePtrList &args_spec_list);
 AbstractBasePtr InferImplAddN(const AnalysisEnginePtr &, const PrimitivePtr &primitive,
                               const AbstractBasePtrList &args_spec_list);
+AbstractBasePtr InferImplScaledGather(const AnalysisEnginePtr &, const PrimitivePtr &primitive,
+                                      const AbstractBasePtrList &args_spec_list);
 
 template <typename T>
 AbstractBasePtr InferTupleOrListOrDictLen(const std::string &op_name, const AbstractBasePtrList &args_spec_list) {

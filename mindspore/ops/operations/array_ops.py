@@ -4721,3 +4721,19 @@ class Identity(PrimitiveWithInfer):
                'dtype': x['dtype'],
                'value': None}
         return out
+
+class ScaledGather(PrimitiveWithCheck):
+    @prim_attr_register
+    def __init__(self):
+        """Initialize index_select"""
+        self.init_prim_io_names(inputs=['params', 'indices', 'alpha', 'axis'], outputs=['output'])
+
+    def __check__(self, params, indices, alpha, axis):
+        # validator.check_subclass("params", params['dtype'], mstype.tensor, self.name)
+        validator.check_tensor_type_same({"indices": indices['dtype']}, mstype.int_type, self.name)
+        validator.check_subclass("axis", axis['dtype'], mstype.int_, self.name)
+        validator.check_tensor_type_same({"params": params['dtype'], "alpha": alpha['dtype']}, [mstype.float16, mstype.float32], self.name)
+        axis_v = axis['value']
+        params_shp = params['shape']
+        rank = len(params_shp)
+        validator.check_int_range("axis", axis_v, -rank, rank, Rel.INC_LEFT, self.name)

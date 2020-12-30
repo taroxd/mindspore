@@ -907,5 +907,42 @@ AbstractBasePtr InferImplSequenceMask(const AnalysisEnginePtr &, const Primitive
   ShapePtr output_shape = std::make_shared<Shape>(lengths_shape, lengths_shape_min, lengths_shape_max);
   return std::make_shared<AbstractTensor>(kBool, output_shape);
 }
+
+AbstractBasePtr InferImplScaledGather(const AnalysisEnginePtr &, const PrimitivePtr &primitive,
+                                  const AbstractBasePtrList &args_spec_list) {
+  const std::string &op_name = primitive->name();
+  CheckArgsSize(op_name, args_spec_list, 4);
+  AbstractTensorPtr params = CheckArg<AbstractTensor>(op_name, args_spec_list, 0);
+  AbstractTensorPtr indices = CheckArg<AbstractTensor>(op_name, args_spec_list, 1);
+  AbstractScalarPtr axis = CheckArg<AbstractScalar>(op_name, args_spec_list, 3);
+
+  auto params_shp = params->shape()->shape();
+  auto indices_shp = indices->shape()->shape();
+  auto axis_val = GetValue<int>(axis->BuildValue());
+
+  auto params_rank = static_cast<int>(params_shp.size());
+  if (axis_val < 0) {
+    axis_val += params_rank;
+  }
+
+  auto calc_shape = [axis_val, &params_shp](const ShapeVector &inp_vec) -> ShapeVector {
+    ShapeVector out_vec;
+    std::copy(params_shp.begin(), params_shp.begin() + axis_val, std::back_inserter(out_vec));
+    copy(inp_vec.begin(), inp_vec.end(), std::back_inserter(out_vec));
+    copy(params_shp.begin() + axis_val + 1, params_shp.end(), std::back_inserter(out_vec));
+    return out_vec;
+  };
+
+  ShapeVector out_shape = calc_shape(indices_shp);
+  if (!indices->shape()->min_shape().empty() && !indices->shape()->max_shape().empty()) {
+    ShapeVector min_shape = calc_shape(indices->shape()->min_shape());
+    ShapeVector max_shape = calc_shape(indices->shape()->max_shape());
+    return std::make_shared<AbstractTensor>(params->element(),
+                                            std::make_shared<Shape>(out_shape, min_shape, max_shape));
+  }
+
+  return std::make_shared<AbstractTensor>(params->element(), std::make_shared<Shape>(out_shape));
+}
+
 }  // namespace abstract
 }  // namespace mindspore

@@ -53,6 +53,7 @@ ConstInputToAttrInfoRegistry::ConstInputToAttrInfoRegistry() {
   Register(prim::kPrimReduceAny->name(), {1});
   Register(prim::kPrimUnsortedSegmentMin->name(), {2});
   Register(prim::kPrimUnsortedSegmentMax->name(), {2});
+  Register(prim::kPrimScaledGather->name(), {3});
   Register(kSparseGatherV2, {2});
   Register(kUnsortedSegmentProdOpName, {2});
   Register(kSimpleMeanGradOpName, {1});
