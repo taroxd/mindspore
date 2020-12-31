@@ -4014,6 +4014,8 @@ class Scale(PrimitiveWithInfer):
     Scale a tensor by a scalar
     """
 
+    __mindspore_signature__ = (sig.sig_dtype.T, sig.sig_dtype.T)
+
     @prim_attr_register
     def __init__(self):
         self.init_prim_io_names(inputs=['x', 'alpha'], outputs=['y'])

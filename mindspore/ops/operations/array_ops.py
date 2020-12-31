@@ -4723,6 +4723,7 @@ class Identity(PrimitiveWithInfer):
         return out
 
 class ScaledGather(PrimitiveWithCheck):
+
     @prim_attr_register
     def __init__(self):
         """Initialize index_select"""
