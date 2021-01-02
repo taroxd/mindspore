@@ -4008,3 +4008,28 @@ class LinSpace(PrimitiveWithInfer):
                'dtype': start['dtype'],
                'value': None}
         return out
+
+class Scale(PrimitiveWithInfer):
+    """
+    Scale a tensor by a scalar
+    """
+
+    @prim_attr_register
+    def __init__(self):
+        self.init_prim_io_names(inputs=['x', 'alpha'], outputs=['y'])
+
+    def infer_shape(self, x_shape, alpha_shape):
+        return x_shape
+
+    def infer_dtype(self, x_dtype, alpha_dtype):
+        validator.check_tensor_type_same({"x": x_dtype, "alpha": alpha_dtype} , [mstype.float16, mstype.float32], self.name)
+        return x_dtype
+
+    def infer_value(self, x, alpha):
+        if x is not None and alpha is not None:
+            x = x.asnumpy()
+            alpha = c.asnumpy()
+            out = x * alpha
+            out = np.array(out, x.dtype)
+            return Tensor(out)
+        return None

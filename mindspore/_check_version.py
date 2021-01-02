@@ -44,79 +44,17 @@ class GPUEnvChecker(EnvChecker):
     """gpu environment check"""
 
     def __init__(self):
-        self.version = ["10.1"]
-        self.cuda_path = "/usr/local/cuda"
-        if os.path.exists(self.cuda_path):
-            # cuda default path
-            self.cuda_bin = self.cuda_path + "/bin"
-            self.cuda_lib = self.cuda_path + "/lib64"
-            self.cuda_version = self.cuda_path + "/version.txt"
-        else:
-            # custom or unknown environment
-            self.cuda_path = ""
-            self.cuda_bin = ""
-            self.cuda_lib = ""
-            self.cuda_version = ""
-
-        # env
-        self.path = os.getenv("PATH")
-        self.ld_lib_path = os.getenv("LD_LIBRARY_PATH")
-
-        # check
-        self.path_check = "/cuda"
-        self.ld_lib_path_check = "/cuda"
-        self.v = "0"
-
+        pass
     def check_env(self, e):
-        self._check_env()
-        raise e
-
+        pass
     def set_env(self):
-        if not self.cuda_bin:
-            self._check_env()
-            return
-
-        if Path(self.cuda_bin).is_dir():
-            os.environ['PATH'] = self.cuda_bin + ":" + os.environ['PATH']
-        else:
-            raise EnvironmentError(
-                f"No such directory: {self.cuda_bin}, please check if cuda is installed correctly.")
-
+        pass
     def check_version(self):
-        if not Path(self.cuda_version).is_file():
-            logger.warning("Using custom cuda path, cuda version checking is skiped, please make sure "
-                           "cuda version is supported, you can reference to the installation guidelines "
-                           "https://www.mindspore.cn/install")
-            return
-
-        v = self._read_version(self.cuda_version)
-        v = version.parse(v)
-        v_str = str(v.major) + "." + str(v.minor)
-        if v_str not in self.version:
-            logger.warning(f"MindSpore version {__version__} and cuda version {v_str} does not match, "
-                           "reference to the match info on: https://www.mindspore.cn/install")
-
+        pass
     def _check_env(self):
-        """gpu cuda path check"""
-        if self.path is None or self.path_check not in self.path:
-            logger.warning("Can not find nvcc compiler(need by mindspore-gpu), please check if you have set env "
-                           "PATH, you can reference to the installation guidelines https://www.mindspore.cn/install")
-
-        if self.ld_lib_path is None or self.ld_lib_path_check not in self.ld_lib_path:
-            logger.warning("Can not find cuda so(need by mindspore-gpu), please check if you have set env "
-                           "LD_LIBRARY_PATH, you can reference to the installation guidelines "
-                           "https://www.mindspore.cn/install")
-
+        pass
     def _read_version(self, file_path):
-        """get gpu version info"""
-        with open(file_path, 'r') as f:
-            all_info = f.readlines()
-            for line in all_info:
-                if line.startswith("CUDA Version"):
-                    self.v = line.strip().split("CUDA Version")[1]
-                    return self.v
-        return self.v
-
+        pass
 
 class AscendEnvChecker(EnvChecker):
     """ascend environment check"""
