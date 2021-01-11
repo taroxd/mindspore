@@ -49,14 +49,18 @@ class ScaledGatherKernel : public GpuKernel {
            reinterpret_cast<cudaStream_t>(stream_ptr));
 
     cublasPointerMode_t orig_ptr_mode;
-    CHECK_CUBLAS_RET_WITH_EXCEPT(cublasGetPointerMode(blas_handle_, &orig_ptr_mode), "cublasGetPointerMode failed");
-    CHECK_CUBLAS_RET_WITH_EXCEPT(cublasSetPointerMode(blas_handle_, CUBLAS_POINTER_MODE_DEVICE), "cublasSetPointerMode failed");
+    CHECK_CUBLAS_RET_WITH_EXCEPT(kernel_node_,
+      cublasGetPointerMode(blas_handle_, &orig_ptr_mode), "cublasGetPointerMode failed");
+    CHECK_CUBLAS_RET_WITH_EXCEPT(kernel_node_,
+      cublasSetPointerMode(blas_handle_, CUBLAS_POINTER_MODE_DEVICE), "cublasSetPointerMode failed");
 
-    CHECK_CUBLAS_RET_WITH_EXCEPT(cublasScalEx(blas_handle_, output_size_list_[0] / sizeof(T),
+    CHECK_CUBLAS_RET_WITH_EXCEPT(kernel_node_,
+      cublasScalEx(blas_handle_, output_size_list_[0] / sizeof(T),
       alpha_addr, dtype_alpha_, output_addr, dtype_output_, 1, CUDA_R_32F),
       "cublasScalEx Failed");
 
-    CHECK_CUBLAS_RET_WITH_EXCEPT(cublasSetPointerMode(blas_handle_, orig_ptr_mode), "cublasSetPointerMode restore failed");
+    CHECK_CUBLAS_RET_WITH_EXCEPT(kernel_node_,
+      cublasSetPointerMode(blas_handle_, orig_ptr_mode), "cublasSetPointerMode restore failed");
     return true;
   }
   bool Init(const CNodePtr &kernel_node) override {

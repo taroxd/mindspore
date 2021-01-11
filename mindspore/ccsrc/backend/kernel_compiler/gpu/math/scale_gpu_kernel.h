@@ -28,19 +28,24 @@ class ScaleGpuKernel : public GpuKernel {
     T *alpha_addr = GetDeviceAddress<T>(inputs, 1);
     T *output_addr = GetDeviceAddress<T>(outputs, 0);
 
-    CHECK_CUDA_RET_WITH_EXCEPT(cudaMemcpyAsync(output_addr, input_addr, input_size_,
+    CHECK_CUDA_RET_WITH_EXCEPT(kernel_node_,
+      cudaMemcpyAsync(output_addr, input_addr, input_size_,
       cudaMemcpyDeviceToDevice, reinterpret_cast<cudaStream_t>(stream_ptr)),
       "cudaMemcpyAsync failed in ScaleGpuKernel::Launch.");
 
     cublasPointerMode_t orig_ptr_mode;
-    CHECK_CUBLAS_RET_WITH_EXCEPT(cublasGetPointerMode(blas_handle_, &orig_ptr_mode), "cublasGetPointerMode failed");
-    CHECK_CUBLAS_RET_WITH_EXCEPT(cublasSetPointerMode(blas_handle_, CUBLAS_POINTER_MODE_DEVICE), "cublasSetPointerMode failed");
+    CHECK_CUBLAS_RET_WITH_EXCEPT(kernel_node_,
+      cublasGetPointerMode(blas_handle_, &orig_ptr_mode), "cublasGetPointerMode failed");
+    CHECK_CUBLAS_RET_WITH_EXCEPT(kernel_node_,
+      cublasSetPointerMode(blas_handle_, CUBLAS_POINTER_MODE_DEVICE), "cublasSetPointerMode failed");
 
-    CHECK_CUBLAS_RET_WITH_EXCEPT(cublasScalEx(blas_handle_, input_size_ / sizeof(T),
+    CHECK_CUBLAS_RET_WITH_EXCEPT(kernel_node_,
+      cublasScalEx(blas_handle_, input_size_ / sizeof(T),
       alpha_addr, dtype_alpha_, output_addr, dtype_x_, 1, CUDA_R_32F),
       "cublasScalEx Failed");
 
-    CHECK_CUBLAS_RET_WITH_EXCEPT(cublasSetPointerMode(blas_handle_, orig_ptr_mode), "cublasSetPointerMode restore failed");
+    CHECK_CUBLAS_RET_WITH_EXCEPT(kernel_node_,
+      cublasSetPointerMode(blas_handle_, orig_ptr_mode), "cublasSetPointerMode restore failed");
 
     return true;
   }
