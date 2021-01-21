@@ -54,12 +54,25 @@ def get_bprop_conv2d(self):
         dilation=self.dilation, stride=self.stride, group=self.group, data_format=self.format
     )
     get_shape = P.Shape()
+    img2col = P.Im2Col(kernel_size=self.kernel_size, stride=self.stride, pad_mode=self.pad_mode)
+    reduce_sum = P.ReduceSum(keep_dims=False)
+    matmul = P.MatMul(transpose_b=True)
+    reshape = P.Reshape()
+    hack_bprop = (self.out_channel > 1000)
+    out_channel = self.out_channel
 
     def bprop(x, w, out, dout):
         dx = input_grad(dout, w, get_shape(x))
         if env_force_bprop_seq == "1":
             x = F.depend(x, dx)
-        dw = filter_grad(dout, x, get_shape(w))
+        if hack_bprop:
+            matrix_A = img2col(x)
+            matrix_A = reduce_sum(matrix_A, 0)
+            matrix_G = reduce_sum(dout, 0)
+            matrix_G = reshape(matrix_G, out_channel, -1)
+            dw = matmul(matrix_G, matrix_A)
+        else:
+            dw = filter_grad(dout, x, get_shape(w))
         return dx, dw
 
     return bprop
