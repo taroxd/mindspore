@@ -69,7 +69,7 @@ def get_bprop_conv2d(self):
             matrix_A = img2col(x)
             matrix_A = reduce_sum(matrix_A, 0)
             matrix_G = reduce_sum(dout, 0)
-            matrix_G = reshape(matrix_G, out_channel, -1)
+            matrix_G = reshape(matrix_G, (out_channel, -1))
             dw = matmul(matrix_G, matrix_A)
         else:
             dw = filter_grad(dout, x, get_shape(w))
