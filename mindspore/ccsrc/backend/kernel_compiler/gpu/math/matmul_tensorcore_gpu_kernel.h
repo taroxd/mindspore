@@ -30,7 +30,7 @@ namespace kernel {
 template <typename T>
 class MatMulTensorCoreGpuKernel : public GpuKernel {
  public:
-  MatMulGpuKernel()
+  MatMulTensorCoreGpuKernel()
       : batch_(0),
         m_(0),
         n_(0),
@@ -43,7 +43,7 @@ class MatMulTensorCoreGpuKernel : public GpuKernel {
         dtype_b_(CUDA_R_32F),
         dtype_c_(CUDA_R_32F),
         algo_(CUBLAS_GEMM_DEFAULT) {}
-  ~MatMulGpuKernel() = default;
+  ~MatMulTensorCoreGpuKernel() = default;
   const std::vector<size_t> &GetInputSizeList() const override { return input_size_list_; }
   const std::vector<size_t> &GetOutputSizeList() const override { return output_size_list_; }
   const std::vector<size_t> &GetWorkspaceSizeList() const override { return workspace_size_list_; }
