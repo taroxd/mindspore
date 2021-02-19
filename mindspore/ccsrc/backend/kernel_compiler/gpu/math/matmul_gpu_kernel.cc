@@ -15,6 +15,7 @@
  */
 
 #include "backend/kernel_compiler/gpu/math/matmul_gpu_kernel.h"
+#include "backend/kernel_compiler/gpu/math/matmul_tensorcore_gpu_kernel.h"
 
 namespace mindspore {
 namespace kernel {
@@ -34,5 +35,15 @@ MS_REG_GPU_KERNEL_ONE(
   BatchMatMul,
   KernelAttr().AddInputAttr(kNumberTypeFloat16).AddInputAttr(kNumberTypeFloat16).AddOutputAttr(kNumberTypeFloat16),
   MatMulGpuKernel, half)
+
+// tensorcore
+MS_REG_GPU_KERNEL_ONE(
+  MatMul,
+  KernelAttr().AddInputAttr(kNumberTypeFloat32).AddInputAttr(kNumberTypeFloat32).AddOutputAttr(kNumberTypeFloat32),
+  MatMulTensorCoreGpuKernel, float)
+MS_REG_GPU_KERNEL_ONE(
+  BatchMatMul,
+  KernelAttr().AddInputAttr(kNumberTypeFloat32).AddInputAttr(kNumberTypeFloat32).AddOutputAttr(kNumberTypeFloat32),
+  MatMulTensorCoreGpuKernel, float)
 }  // namespace kernel
 }  // namespace mindspore

@@ -835,6 +835,12 @@ class BatchMatMul(MatMul):
             raise ValueError('For \'BatchMatMul\' input x, y should be the same dimension size and should be '
                              'greater or equal to 3,' + f' while x size = {len(x)}, y size= {len(y)}')
 
+class MatMulTensorCore(MatMul):
+    pass
+
+class BatchMatMulTensorCore(BatchMatMul):
+    pass
+
 
 class CumSum(PrimitiveWithInfer):
     """
