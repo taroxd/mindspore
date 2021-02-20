@@ -38,11 +38,11 @@ MS_REG_GPU_KERNEL_ONE(
 
 // tensorcore
 MS_REG_GPU_KERNEL_ONE(
-  MatMul,
+  MatMulTensorCore,
   KernelAttr().AddInputAttr(kNumberTypeFloat32).AddInputAttr(kNumberTypeFloat32).AddOutputAttr(kNumberTypeFloat32),
   MatMulTensorCoreGpuKernel, float)
 MS_REG_GPU_KERNEL_ONE(
-  BatchMatMul,
+  BatchMatMulTensorCore,
   KernelAttr().AddInputAttr(kNumberTypeFloat32).AddInputAttr(kNumberTypeFloat32).AddOutputAttr(kNumberTypeFloat32),
   MatMulTensorCoreGpuKernel, float)
 }  // namespace kernel
